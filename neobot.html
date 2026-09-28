@@ -80,6 +80,7 @@
             font-size: 0.9rem;
             line-height: 1.4;
             border: 1px solid #ddd;
+            white-space: pre-wrap;
         }
         .message.user {
             background: #f0f0f0;
@@ -125,6 +126,8 @@
         .setup {
             padding: 20px;
             text-align: center;
+            position: relative;
+            overflow: hidden;
         }
         .setup h2 {
             margin: 0 0 10px;
@@ -443,6 +446,21 @@
         .hidden {
             display: none;
         }
+        .flare {
+            position: absolute;
+            pointer-events: none;
+            z-index: -1;
+        }
+        .flare-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,165,0,0.6) 0%, rgba(255,165,0,0) 70%);
+            animation: flare-expand 2s ease-out forwards;
+        }
+        @keyframes flare-expand {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(4); opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -476,6 +494,10 @@
                     <div class="persona-card" data-persona="creative">
                         <h4>Creative</h4>
                         <p>Artistic</p>
+                    </div>
+                    <div class="persona-card" data-persona="muslim">
+                        <h4>Muslim</h4>
+                        <p>Guidance</p>
                     </div>
                 </div>
             </div>
@@ -512,6 +534,7 @@
                         <input type="password" id="apiKey" placeholder="Your API key...">
                         <button class="btn" id="saveApiKey">Connect</button>
                     </div>
+                    <div class="flare" id="flareContainer"></div>
                 </div>
             </div>
         </div>
@@ -549,12 +572,54 @@
             apiEndpoint: 'https://generativelanguage.googleapis.com/v1beta',
             modelsEndpoint: 'https://generativelanguage.googleapis.com/v1beta/models',
             personas: {
-                wise: { name: 'Wise', systemPrompt: 'You are NeoBot, a wise assistant. Be supportive but maintain your own perspective - not a mirror. Provide thoughtful guidance. Keep responses concise (2-4 sentences).' },
-                friend: { name: 'Friend', systemPrompt: 'You are NeoBot, a supportive friend. Be empathetic but offer your own thoughts. Create a safe space. Keep it warm and conversational.' },
-                analyst: { name: 'Analyst', systemPrompt: 'You are NeoBot, an analytical assistant. Be logical and data-driven. Break down complex issues. Be precise and factual.' },
-                humor: { name: 'Humor', systemPrompt: 'You are NeoBot, a witty assistant. Use appropriate humor. Balance fun with understanding. Keep it respectful.' },
-                strict: { name: 'Strict', systemPrompt: 'You are NeoBot, a direct coach. Be straightforward and honest. Push users to improve. Be firm but fair.' },
-                creative: { name: 'Creative', systemPrompt: 'You are NeoBot, a creative assistant. Offer fresh perspectives. Inspire new ideas. Balance creativity with practicality.' }
+                wise: { 
+                    name: 'Wise', 
+                    systemPrompt: 'You are NeoBot, a wise assistant. Be supportive but maintain your own perspective - not a mirror. Provide thoughtful guidance. Always complete your full response without cutting off mid-sentence. Keep responses natural and flowing.' 
+                },
+                friend: { 
+                    name: 'Friend', 
+                    systemPrompt: 'You are NeoBot, a supportive friend. Be empathetic but offer your own thoughts. Create a safe space. Always complete your full response without cutting off mid-sentence. Keep it warm and conversational.' 
+                },
+                analyst: { 
+                    name: 'Analyst', 
+                    systemPrompt: 'You are NeoBot, an analytical assistant. Be logical and data-driven. Break down complex issues. Always complete your full response without cutting off mid-sentence. Be precise and factual.' 
+                },
+                humor: { 
+                    name: 'Humor', 
+                    systemPrompt: 'You are NeoBot, a witty assistant. Use appropriate humor. Balance fun with understanding. Always complete your full response without cutting off mid-sentence. Keep it respectful.' 
+                },
+                strict: { 
+                    name: 'Strict', 
+                    systemPrompt: 'You are NeoBot, a direct coach. Be straightforward and honest. Push users to improve. Always complete your full response without cutting off mid-sentence. Be firm but fair.' 
+                },
+                creative: { 
+                    name: 'Creative', 
+                    systemPrompt: 'You are NeoBot, a creative assistant. Offer fresh perspectives. Inspire new ideas. Always complete your full response without cutting off mid-sentence. Balance creativity with practicality.' 
+                },
+                muslim: { 
+                    name: 'Muslim', 
+                    systemPrompt: `You are NeoBot, a knowledgeable Islamic assistant providing guidance based on Quran and Sunnah. 
+                    
+MUSLIM GUIDANCE AND COUNSELING GUIDELINES:
+- Always respond with Islamic values of patience, wisdom, and compassion
+- Base all advice on Quranic teachings and authentic Hadith
+- Encourage good character (akhlaq), honesty, and justice
+- Promote family harmony and respect for parents
+- Advise regular prayer (salah), fasting, and charity (zakat/sadaqah)
+- Recommend seeking knowledge and remembering Allah in all situations
+- Address problems with sabr (patience) and tawakkul (trust in Allah)
+- Warn against haram (forbidden) actions with wisdom and kindness
+- Encourage halal (permissible) alternatives and solutions
+- Remind about the importance of intention (niyyah) and sincerity (ikhlas)
+- Guide towards repentance (tawbah) and seeking forgiveness
+- Promote unity (ukhuwwah) and good relations among Muslims
+- Advise consulting qualified scholars for complex religious matters
+- Always complete your full response without cutting off mid-sentence
+- Respond in a respectful, knowledgeable, and compassionate manner
+- If unsure about a religious ruling, state that Islamic scholars should be consulted
+- Never give fatwa (religious rulings) - only provide general guidance
+- Always end responses with appropriate Islamic supplications when relevant`
+                }
             },
             defaultPersona: 'wise'
         };
@@ -594,7 +659,8 @@
             savePersona: document.getElementById('savePersona'),
             resetPersona: document.getElementById('resetPersona'),
             customInstructions: document.getElementById('customInstructions'),
-            personaOptions: document.getElementById('personaOptions')
+            personaOptions: document.getElementById('personaOptions'),
+            flareContainer: document.getElementById('flareContainer')
         };
 
         function init() {
@@ -637,6 +703,30 @@
             });
             if (state.synthesis) {
                 state.synthesis.onvoiceschanged = updateVoices;
+            }
+        }
+
+        function createFlareAnimation() {
+            const flareContainer = elements.flareContainer;
+            flareContainer.innerHTML = '';
+            
+            const centerX = flareContainer.offsetWidth / 2;
+            const centerY = flareContainer.offsetHeight / 2;
+            
+            for (let i = 0; i < 8; i++) {
+                const circle = document.createElement('div');
+                circle.className = 'flare-circle';
+                const angle = (i / 8) * Math.PI * 2;
+                const distance = 100 + Math.random() * 50;
+                const x = centerX + Math.cos(angle) * distance;
+                const y = centerY + Math.sin(angle) * distance;
+                circle.style.left = x + 'px';
+                circle.style.top = y + 'px';
+                circle.style.width = (20 + Math.random() * 30) + 'px';
+                circle.style.height = circle.style.width;
+                circle.style.animationDelay = (Math.random() * 0.5) + 's';
+                circle.style.animationDuration = (1.5 + Math.random() * 0.5) + 's';
+                flareContainer.appendChild(circle);
             }
         }
 
@@ -683,6 +773,7 @@
             if (state.apiKey) {
                 localStorage.setItem('geminiApiKey', state.apiKey);
                 connectToGemini();
+                createFlareAnimation();
             } else {
                 addSystemMessage('Enter API key');
             }
@@ -913,7 +1004,12 @@
             const requestBody = {
                 contents: [{ role: 'user', parts: [{ text: userMessage }] }],
                 systemInstruction: { parts: [{ text: systemPrompt }] },
-                generationConfig: { temperature: 0.7, topP: 0.9, topK: 40, maxOutputTokens: 500 }
+                generationConfig: { 
+                    temperature: 0.7, 
+                    topP: 0.9, 
+                    topK: 40, 
+                    maxOutputTokens: 1000
+                }
             };
             if (state.conversationHistory.length > 0) {
                 requestBody.contents = [
