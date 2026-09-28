@@ -5,134 +5,509 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NeoBot</title>
     <style>
-        body { font-family: system-ui, sans-serif; background: #111; color: #eee; margin: 0; padding: 20px; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
-        .c { max-width: 500px; width: 100%; max-height: 90vh; background: #222; border-radius: 12px; overflow: hidden; display: flex; flex-direction: column; }
-        .h { background: #007; padding: 15px; text-align: center; position: relative; }
-        .h h1 { margin: 0; font-size: 1.3rem; }
-        .h p { margin: 5px 0 0; color: #aaa; font-size: .9rem; }
-        .s { position: absolute; top: 12px; right: 12px; width: 10px; height: 10px; border-radius: 50%; background: #f44; border: 1px solid #fff; }
-        .s.c { background: #2d2; }
-        .s.l { background: #fa0; animation: p 1s infinite; }
-        .s.sp { background: #19f; animation: p .5s infinite; }
-        .s.sr { background: #f66; animation: p .3s infinite; }
-        @keyframes p { 0%,100%{transform:scale(1)}50%{transform:scale(1.2)} }
-        .ch { flex: 1; overflow-y: auto; padding: 15px; background: #111; }
-        .m { display: flex; flex-direction: column; gap: 10px; }
-        .msg { max-width: 85%; padding: 10px 12px; border-radius: 12px; font-size: .9rem; line-height: 1.4; animation: f .3s; word-break: break-word; }
-        @keyframes f { from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)} }
-        .u { background: #007; color: #fff; align-self: flex-end; border-bottom-right-radius: 3px; }
-        .b { background: #333; color: #eee; align-self: flex-start; border-bottom-left-radius: 3px; border-left: 2px solid #007; }
-        .sy { background: #222; color: #888; align-self: center; padding: 6px 10px; border-radius: 8px; font-size: .75rem; border: 1px solid #444; text-align: center; }
-        .sr { background: #0073; color: #8df; align-self: flex-start; border-left: 2px solid #00a; font-size: .85rem; }
-        .sr a { color: #0af; text-decoration: none; }
-        .t { display: flex; gap: 4px; padding: 10px 12px; background: #333; border-radius: 12px; align-self: flex-start; border-left: 2px solid #007; }
-        .t span { width: 6px; height: 6px; background: #0af; border-radius: 50%; animation: b 1.4s infinite ease-in-out; }
-        .t span:nth-child(1) { animation-delay: -.32s; }
-        .t span:nth-child(2) { animation-delay: -.16s; }
-        @keyframes b { 0%,80%,100%{transform:scale(0)}40%{transform:scale(1)} }
-        .set { padding: 20px; text-align: center; }
-        .set h2 { color: #0af; margin: 0 0 10px; font-size: 1.1rem; }
-        .set p { color: #888; margin: 0 0 15px; font-size: .85rem; }
-        .st { background: #222; border-radius: 8px; padding: 15px; margin-bottom: 10px; border: 1px solid #444; }
-        .st h3 { color: #0af; margin: 0 0 8px; font-size: .9rem; }
-        .st label { display: block; text-align: left; margin-bottom: 6px; font-size: .8rem; color: #aaa; }
-        .st input, .st select, .st textarea { width: 100%; padding: 8px; border: 1px solid #444; border-radius: 6px; font-size: .85rem; background: #333; color: #eee; margin-bottom: 8px; }
-        .st input:focus, .st select:focus, .st textarea:focus { outline: none; border-color: #0af; }
-        .st textarea { min-height: 60px; resize: vertical; }
-        .pp { background: #0072; border-radius: 6px; padding: 8px; margin-top: 8px; font-size: .8rem; color: #8df; border-left: 2px solid #00a; text-align: left; }
-        .btn { background: #007; color: #fff; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: .85rem; transition: .2s; }
-        .btn:hover { background: #009; }
-        .btn:disabled { opacity: .6; cursor: not-allowed; }
-        .btn2 { background: #333; color: #0af; border: 1px solid #444; }
-        .btn2:hover { background: #444; border-color: #666; }
-        .bg { display: flex; gap: 8px; justify-content: center; margin-top: 10px; }
-        .ms { padding: 10px 15px; background: #222; border-top: 1px solid #444; border-bottom: 1px solid #444; }
-        .ms label { display: block; font-size: .8rem; color: #888; margin-bottom: 6px; }
-        .ms select { width: 100%; padding: 6px 8px; border: 1px solid #444; border-radius: 6px; font-size: .8rem; background: #333; color: #eee; cursor: pointer; }
-        .ms select:focus { outline: none; border-color: #0af; }
-        .rf { background: #333; color: #0af; border: 1px solid #444; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: .75rem; margin-left: 8px; }
-        .rf:hover { background: #444; border-color: #666; }
-        .mi { font-size: .7rem; color: #666; margin-top: 4px; }
-        .ct { padding: 15px; background: #222; display: flex; justify-content: center; gap: 10px; border-top: 1px solid #444; }
-        .mb { width: 60px; height: 60px; border-radius: 50%; background: #007; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 10px #0077; transition: .2s; position: relative; overflow: hidden; }
-        .mb:hover { transform: scale(1.05); box-shadow: 0 4px 15px #0077; }
-        .mb:active { transform: scale(.95); }
-        .mb.a { background: #f44; animation: p 1s infinite; }
-        .mb svg { width: 22px; height: 22px; fill: #fff; }
-        .mb .w { position: absolute; width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
-        .mb .w span { position: absolute; border: 1px solid rgba(255,255,255,.3); border-radius: 50%; animation: w 1.5s infinite ease-out; }
-        .mb.a .w span { animation: wa 1.5s infinite ease-out; }
-        @keyframes w { 0%{transform:scale(1);opacity:1}100%{transform:scale(2);opacity:0} }
-        @keyframes wa { 0%{transform:scale(1);opacity:.5}100%{transform:scale(2.5);opacity:0} }
-        .sb { width: 60px; height: 60px; border-radius: 50%; background: #f44; border: none; cursor: pointer; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 10px #f444; transition: .2s; opacity: 0; visibility: hidden; }
-        .sb.v { opacity: 1; visibility: visible; }
-        .sb:hover { transform: scale(1.05); box-shadow: 0 4px 15px #f444; }
-        .sb:active { transform: scale(.95); }
-        .sb svg { width: 22px; height: 22px; fill: #fff; }
-        .sbtn { position: absolute; top: 12px; left: 12px; background: #333; border: 1px solid #444; color: #0af; width: 28px; height: 28px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; }
-        .sbtn:hover { background: #444; border-color: #666; }
-        .sbtn svg { width: 14px; height: 14px; fill: currentColor; }
-        .em { background: #f442; color: #f66; padding: 8px 10px; border-radius: 10px; align-self: center; font-size: .8rem; margin: 8px 0; border-left: 2px solid #f66; }
-        .sl { font-size: .7rem; color: #666; margin-top: 6px; text-align: right; }
-        .sl a { color: #0af; text-decoration: none; }
-        .sl a:hover { text-decoration: underline; }
-        .ch::-webkit-scrollbar { width: 4px; }
-        .ch::-webkit-scrollbar-track { background: #222; }
-        .ch::-webkit-scrollbar-thumb { background: #444; border-radius: 2px; }
-        .mo { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,.8); display: none; justify-content: center; align-items: center; z-index: 1000; }
-        .mo.v { display: flex; }
-        .md { background: #222; border-radius: 12px; padding: 18px; width: 90%; max-width: 400px; max-height: 70vh; overflow-y: auto; border: 1px solid #444; }
-        .md h2 { color: #0af; margin: 0 0 12px; text-align: center; font-size: 1.1rem; }
-        .mcl { position: absolute; top: 10px; right: 10px; background: none; border: none; color: #888; font-size: 20px; cursor: pointer; width: 24px; height: 24px; display: flex; justify-content: center; align-items: center; }
-        .mcl:hover { color: #f66; }
-        .po { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 8px; margin: 12px 0; }
-        .pc { background: #333; border: 1px solid #444; border-radius: 6px; padding: 8px; cursor: pointer; text-align: center; transition: .2s; }
-        .pc:hover { border-color: #0af; background: #0072; }
-        .pc.sel { border-color: #0af; background: #0073; }
-        .pc h4 { color: #0af; margin: 0 0 4px; font-size: .8rem; }
-        .pc p { font-size: .7rem; color: #888; margin: 0; }
-        .hd { display: none; }
+        body {
+            font-family: system-ui, sans-serif;
+            background: white;
+            color: black;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: #f5f5f5;
+            padding: 15px;
+            text-align: center;
+            position: relative;
+            border-bottom: 1px solid #ddd;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 1.3rem;
+        }
+        .header p {
+            margin: 5px 0 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        .status {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #f44;
+            border: 1px solid #000;
+        }
+        .status.connected {
+            background: #2d2;
+        }
+        .status.listening {
+            background: #fa0;
+        }
+        .status.speaking {
+            background: #19f;
+        }
+        .chat {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background: white;
+        }
+        .messages {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .message {
+            max-width: 85%;
+            padding: 10px 12px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            border: 1px solid #ddd;
+        }
+        .message.user {
+            background: #f0f0f0;
+            align-self: flex-end;
+        }
+        .message.bot {
+            background: white;
+            align-self: flex-start;
+            border-left: 2px solid #ccc;
+        }
+        .message.system {
+            background: #f9f9f9;
+            color: #666;
+            align-self: center;
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            border: 1px solid #ddd;
+        }
+        .typing {
+            display: flex;
+            gap: 4px;
+            padding: 10px 12px;
+            background: white;
+            border-radius: 8px;
+            align-self: flex-start;
+            border: 1px solid #ddd;
+            border-left: 2px solid #ccc;
+        }
+        .typing span {
+            width: 6px;
+            height: 6px;
+            background: #666;
+            border-radius: 50%;
+            animation: bounce 1.4s infinite ease-in-out;
+        }
+        .typing span:nth-child(1) { animation-delay: -0.32s; }
+        .typing span:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounce {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+        .setup {
+            padding: 20px;
+            text-align: center;
+        }
+        .setup h2 {
+            margin: 0 0 10px;
+            font-size: 1.1rem;
+        }
+        .setup p {
+            color: #666;
+            margin: 0 0 15px;
+            font-size: 0.85rem;
+        }
+        .step {
+            background: #f9f9f9;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+        }
+        .step h3 {
+            margin: 0 0 8px;
+            font-size: 0.9rem;
+        }
+        .step label {
+            display: block;
+            text-align: left;
+            margin-bottom: 6px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+        .step input,
+        .step select,
+        .step textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+        .step input:focus,
+        .step select:focus,
+        .step textarea:focus {
+            outline: none;
+            border-color: #666;
+        }
+        .step textarea {
+            min-height: 60px;
+            resize: vertical;
+        }
+        .btn {
+            background: #f0f0f0;
+            color: black;
+            border: 1px solid #ccc;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .btn:hover {
+            background: #e0e0e0;
+        }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .btn-secondary {
+            background: white;
+            color: #666;
+            border: 1px solid #ccc;
+        }
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .model-selector {
+            padding: 10px 15px;
+            background: #f9f9f9;
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+        .model-selector label {
+            display: block;
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 6px;
+        }
+        .model-selector select {
+            width: 100%;
+            padding: 6px 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 0.8rem;
+        }
+        .model-selector select:focus {
+            outline: none;
+            border-color: #666;
+        }
+        .refresh-btn {
+            background: #f0f0f0;
+            color: #666;
+            border: 1px solid #ccc;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            margin-left: 8px;
+        }
+        .refresh-btn:hover {
+            background: #e0e0e0;
+        }
+        .model-info {
+            font-size: 0.7rem;
+            color: #999;
+            margin-top: 4px;
+        }
+        .controls {
+            padding: 15px;
+            background: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            border-top: 1px solid #ddd;
+        }
+        .mic-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .mic-button:hover {
+            background: #e0e0e0;
+        }
+        .mic-button:active {
+            transform: scale(0.95);
+        }
+        .mic-button.active {
+            background: #d44;
+            color: white;
+        }
+        .mic-button svg {
+            width: 22px;
+            height: 22px;
+            fill: black;
+        }
+        .mic-button.active svg {
+            fill: white;
+        }
+        .stop-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #d44;
+            border: 1px solid #b00;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            opacity: 0;
+            visibility: hidden;
+        }
+        .stop-button.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .stop-button:hover {
+            background: #b00;
+        }
+        .stop-button svg {
+            width: 22px;
+            height: 22px;
+            fill: white;
+        }
+        .settings-btn {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            color: black;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .settings-btn:hover {
+            background: #e0e0e0;
+        }
+        .settings-btn svg {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+        .error {
+            background: #fdd;
+            color: #900;
+            padding: 8px 10px;
+            border-radius: 6px;
+            align-self: center;
+            font-size: 0.8rem;
+            margin: 8px 0;
+            border: 1px solid #b00;
+        }
+        .source {
+            font-size: 0.7rem;
+            color: #999;
+            margin-top: 6px;
+            text-align: right;
+        }
+        .source a {
+            color: #666;
+            text-decoration: none;
+        }
+        .source a:hover {
+            text-decoration: underline;
+        }
+        .chat::-webkit-scrollbar {
+            width: 6px;
+        }
+        .chat::-webkit-scrollbar-track {
+            background: #f9f9f9;
+        }
+        .chat::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 3px;
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-overlay.visible {
+            display: flex;
+        }
+        .modal {
+            background: white;
+            border-radius: 8px;
+            padding: 18px;
+            width: 90%;
+            max-width: 400px;
+            max-height: 70vh;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+        }
+        .modal h2 {
+            margin: 0 0 12px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 20px;
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-close:hover {
+            color: #000;
+        }
+        .persona-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 8px;
+            margin: 12px 0;
+        }
+        .persona-card {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            padding: 8px;
+            cursor: pointer;
+            text-align: center;
+        }
+        .persona-card:hover {
+            border-color: #666;
+            background: #f0f0f0;
+        }
+        .persona-card.selected {
+            border-color: #000;
+            background: #e0e0e0;
+        }
+        .persona-card h4 {
+            margin: 0 0 4px;
+            font-size: 0.8rem;
+        }
+        .persona-card p {
+            font-size: 0.7rem;
+            color: #666;
+            margin: 0;
+        }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
-    <div class="mo" id="settingsModal">
-        <div class="md">
-            <button class="mcl" id="closeSettings">&times;</button>
+    <div class="modal-overlay" id="settingsModal">
+        <div class="modal">
+            <button class="modal-close" id="closeSettings">&times;</button>
             <h2>Persona</h2>
-            <div class="st">
+            <div class="step">
                 <p>Choose how NeoBot behaves:</p>
-                <div class="po" id="personaOptions">
-                    <div class="pc sel" data-persona="wise"><h4>Wise</h4><p>Guide</p></div>
-                    <div class="pc" data-persona="friend"><h4>Friend</h4><p>Supportive</p></div>
-                    <div class="pc" data-persona="analyst"><h4>Analyst</h4><p>Logical</p></div>
-                    <div class="pc" data-persona="humor"><h4>Humor</h4><p>Funny</p></div>
-                    <div class="pc" data-persona="strict"><h4>Strict</h4><p>Direct</p></div>
-                    <div class="pc" data-persona="creative"><h4>Creative</h4><p>Artistic</p></div>
+                <div class="persona-options" id="personaOptions">
+                    <div class="persona-card selected" data-persona="wise">
+                        <h4>Wise</h4>
+                        <p>Guide</p>
+                    </div>
+                    <div class="persona-card" data-persona="friend">
+                        <h4>Friend</h4>
+                        <p>Supportive</p>
+                    </div>
+                    <div class="persona-card" data-persona="analyst">
+                        <h4>Analyst</h4>
+                        <p>Logical</p>
+                    </div>
+                    <div class="persona-card" data-persona="humor">
+                        <h4>Humor</h4>
+                        <p>Funny</p>
+                    </div>
+                    <div class="persona-card" data-persona="strict">
+                        <h4>Strict</h4>
+                        <p>Direct</p>
+                    </div>
+                    <div class="persona-card" data-persona="creative">
+                        <h4>Creative</h4>
+                        <p>Artistic</p>
+                    </div>
                 </div>
             </div>
-            <div class="st">
+            <div class="step">
                 <h3>Custom</h3>
                 <textarea id="customInstructions" placeholder="Extra instructions..."></textarea>
             </div>
-            <div class="bg">
+            <div class="btn-group">
                 <button class="btn" id="savePersona">Save</button>
-                <button class="btn btn2" id="resetPersona">Reset</button>
+                <button class="btn btn-secondary" id="resetPersona">Reset</button>
             </div>
         </div>
     </div>
-    <div class="c">
-        <div class="h">
-            <button class="sbtn" id="settingsBtn" title="Persona"><svg viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg></button>
+
+    <div class="container">
+        <div class="header">
+            <button class="settings-btn" id="settingsBtn" title="Persona">
+                <svg viewBox="0 0 24 24">
+                    <path d="M19.14 12.94c.04-.31.06-.63.06-.94s-.02-.63-.06-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.04.31-.06.63-.06.94s.02.63.06.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/>
+                </svg>
+            </button>
             <h1>NeoBot</h1>
             <p>AI Assistant</p>
-            <div class="s" id="statusIndicator"></div>
+            <div class="status" id="statusIndicator"></div>
         </div>
-        <div class="ch">
-            <div class="m" id="messages">
-                <div class="set" id="setupPhase">
+
+        <div class="chat">
+            <div class="messages" id="messages">
+                <div class="setup" id="setupPhase">
                     <h2>Setup</h2>
                     <p>Enter API key to start</p>
-                    <div class="st">
+                    <div class="step">
                         <label for="apiKey">Gemini API Key:</label>
                         <input type="password" id="apiKey" placeholder="Your API key...">
                         <button class="btn" id="saveApiKey">Connect</button>
@@ -140,19 +515,499 @@
                 </div>
             </div>
         </div>
-        <div class="ms hd" id="modelSelector">
+
+        <div class="model-selector hidden" id="modelSelector">
             <label for="modelSelect">Model:</label>
-            <div style="display:flex;gap:8px"><select id="modelSelect"><option value="">Loading...</option></select><button class="rf" id="refreshModelsBtn">Refresh</button></div>
-            <div class="mi" id="modelInfo"></div>
+            <div style="display: flex; gap: 8px;">
+                <select id="modelSelect">
+                    <option value="">Loading...</option>
+                </select>
+                <button class="refresh-btn" id="refreshModelsBtn">Refresh</button>
+            </div>
+            <div class="model-info" id="modelInfo"></div>
         </div>
-        <div class="ct hd">
-            <button class="mb" id="micButton" title="Tap to speak"><svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg><div class="w"><span></span><span></span><span></span></div></button>
-            <button class="sb" id="stopButton" title="Stop"><svg viewBox="0 0 24 24"><path d="M6 6h12v12H6z"/></svg></button>
+
+        <div class="controls hidden">
+            <button class="mic-button" id="micButton" title="Tap to speak">
+                <svg viewBox="0 0 24 24">
+                    <path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/>
+                    <path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/>
+                </svg>
+            </button>
+            <button class="stop-button" id="stopButton" title="Stop">
+                <svg viewBox="0 0 24 24">
+                    <path d="M6 6h12v12H6z"/>
+                </svg>
+            </button>
         </div>
-        <div class="sl"><a href="https://github.com/old-droid/Neobot" target="_blank">NeoBot</a></div>
+
+        <div class="source"><a href="https://github.com/old-droid/Neobot" target="_blank">NeoBot</a></div>
     </div>
+
     <script>
-        const C={apiEndpoint:'https://generativelanguage.googleapis.com/v1beta',modelsEndpoint:'https://generativelanguage.googleapis.com/v1beta/models',personas:{wise:{n:'Wise',s:`You are NeoBot, a wise assistant. Be supportive but maintain your own perspective - not a mirror. Provide thoughtful guidance. Keep responses concise (2-4 sentences).`},friend:{n:'Friend',s:`You are NeoBot, a supportive friend. Be empathetic but offer your own thoughts. Create a safe space. Keep it warm and conversational.`},analyst:{n:'Analyst',s:`You are NeoBot, an analytical assistant. Be logical and data-driven. Break down complex issues. Be precise and factual.`},humor:{n:'Humor',s:`You are NeoBot, a witty assistant. Use appropriate humor. Balance fun with understanding. Keep it respectful.`},strict:{n:'Strict',s:`You are NeoBot, a direct coach. Be straightforward and honest. Push users to improve. Be firm but fair.`},creative:{n:'Creative',s:`You are NeoBot, a creative assistant. Offer fresh perspectives. Inspire new ideas. Balance creativity with practicality.`}},defaultPersona:'wise'};let S={isListening:!1,isSpeaking:!1,isProcessing:!1,isConnected:!1,currentModel:'',apiKey:localStorage.getItem('geminiApiKey')||'',models:[],persona:localStorage.getItem('neobotPersona')||C.defaultPersona,customInstructions:localStorage.getItem('neobotCustomInstructions')||'',recognition:null,synthesis:window.speechSynthesis,conversationHistory:[],setupComplete:!1};const E={messages:document.getElementById('messages'),micButton:document.getElementById('micButton'),stopButton:document.getElementById('stopButton'),statusIndicator:document.getElementById('statusIndicator'),modelSelect:document.getElementById('modelSelect'),refreshModelsBtn:document.getElementById('refreshModelsBtn'),modelInfo:document.getElementById('modelInfo'),apiKey:document.getElementById('apiKey'),saveApiKey:document.getElementById('saveApiKey'),setupPhase:document.getElementById('setupPhase'),modelSelector:document.getElementById('modelSelector'),controls:document.querySelector('.ct'),settingsBtn:document.getElementById('settingsBtn'),settingsModal:document.getElementById('settingsModal'),closeSettings:document.getElementById('closeSettings'),savePersona:document.getElementById('savePersona'),resetPersona:document.getElementById('resetPersona'),customInstructions:document.getElementById('customInstructions'),personaOptions:document.getElementById('personaOptions')};function I(){loadPersonaSettings();setupEventListeners();if(S.apiKey){E.apiKey.value=S.apiKey;connectToGemini()}}function setupEventListeners(){E.micButton.addEventListener('click',toggleListening);E.stopButton.addEventListener('click',stopRecording);E.saveApiKey.addEventListener('click',saveApiKey);E.apiKey.addEventListener('keypress',e=>{if(e.key==='Enter')saveApiKey()});E.refreshModelsBtn.addEventListener('click',loadModels);E.modelSelect.addEventListener('change',e=>{S.currentModel=e.target.value;updateModelInfo()});E.settingsBtn.addEventListener('click',()=>E.settingsModal.classList.add('v'));E.closeSettings.addEventListener('click',()=>E.settingsModal.classList.remove('v'));E.savePersona.addEventListener('click',savePersonaSettings);E.resetPersona.addEventListener('click',resetPersonaSettings);E.personaOptions.addEventListener('click',e=>{const c=e.target.closest('.pc');if(c)selectPersona(c.dataset.persona)});E.settingsModal.addEventListener('click',e=>{if(e.target===E.settingsModal)E.settingsModal.classList.remove('v')});if(S.synthesis)S.synthesis.onvoiceschanged=updateVoices}function loadPersonaSettings(){E.personaOptions.querySelectorAll('.pc').forEach(c=>{c.classList.remove('sel');if(c.dataset.persona===S.persona)c.classList.add('sel')});E.customInstructions.value=S.customInstructions}function selectPersona(p){S.persona=p;E.personaOptions.querySelectorAll('.pc').forEach(c=>{c.classList.remove('sel');if(c.dataset.persona===p)c.classList.add('sel')})}function savePersonaSettings(){S.customInstructions=E.customInstructions.value;localStorage.setItem('neobotPersona',S.persona);localStorage.setItem('neobotCustomInstructions',S.customInstructions);E.settingsModal.classList.remove('v');addSystemMessage(`Persona: ${C.personas[S.persona].n}`)}function resetPersonaSettings(){S.persona=C.defaultPersona;S.customInstructions='';E.customInstructions.value='';loadPersonaSettings();localStorage.setItem('neobotPersona',S.persona);localStorage.setItem('neobotCustomInstructions','');addSystemMessage('Persona reset to Wise')}function saveApiKey(){S.apiKey=E.apiKey.value.trim();if(S.apiKey){localStorage.setItem('geminiApiKey',S.apiKey);connectToGemini()}else{addSystemMessage('Enter API key')}}function connectToGemini(){S.isConnected=!0;updateStatusIndicator();addSystemMessage('Connecting...');loadModels()}async function loadModels(){if(!S.apiKey){addSystemMessage('Enter API key first');return}try{addSystemMessage('Loading models...');const r=await fetch(`${C.modelsEndpoint}?key=${S.apiKey}`);if(!r.ok)throw new Error(`HTTP ${r.status}`);const d=await r.json();S.models=d.models||[];const c=S.models.filter(m=>m.supportedGenerationMethods&&m.supportedGenerationMethods.includes('generateContent'));c.sort((a,b)=>getModelPriority(a)-getModelPriority(b));updateModelDropdown(c);if(c.length>0){S.currentModel=c[0].name;E.modelSelect.value=S.currentModel;updateModelInfo()}addSystemMessage(`Loaded ${c.length} models. Using: ${c[0]?.displayName||'Unknown'}`);S.setupComplete=!0;E.setupPhase.style.display='none';document.querySelectorAll('.hd').forEach(el=>el.classList.remove('hd'))}catch(e){console.error('Error:',e);addSystemMessage(`Error: ${e.message}`);S.isConnected=!1;updateStatusIndicator()}}function getModelPriority(m){const b=m.baseModelId||'';if(b.includes('flash-lite')||b.includes('nano'))return 1;if(b.includes('flash'))return 2;if(b.includes('pro'))return 3;return 2}function updateModelDropdown(m){E.modelSelect.innerHTML='<option value="">Select model...</option>';m.forEach(m=>{const o=document.createElement('option');o.value=m.name;o.textContent=`${m.displayName} (${m.baseModelId})`;E.modelSelect.appendChild(o)})}function updateModelInfo(){if(!S.currentModel){E.modelInfo.textContent='';return}const m=S.models.find(m=>m.name===S.currentModel);if(m)E.modelInfo.textContent=`In:${m.inputTokenLimit||'N/A'}|Out:${m.outputTokenLimit||'N/A'} tokens`}function updateVoices(){console.log('Voices:',S.synthesis.getVoices().length)}function updateStatusIndicator(){E.statusIndicator.className='s';if(S.isConnected)E.statusIndicator.classList.add('c');if(S.isListening)E.statusIndicator.classList.add('l');if(S.isSpeaking)E.statusIndicator.classList.add('sp');if(S.isSearching)E.statusIndicator.classList.add('sr')}function getSystemPrompt(){const p=C.personas[S.persona]||C.personas[C.defaultPersona];let s=p.s;if(S.customInstructions)s+=`\n\nExtra: ${S.customInstructions}`;return s}function toggleListening(){if(!S.apiKey){E.setupPhase.style.display='block';E.apiKey.focus();return}if(!S.currentModel){addSystemMessage('Select model first');return}if(S.isListening)stopRecording();else startListening()}function startListening(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){addSystemMessage('Speech Recognition not supported');return}if(S.isSpeaking){S.synthesis.cancel();S.isSpeaking=!1;updateStatusIndicator()}S.recognition=new SR();S.recognition.continuous=!1;S.recognition.interimResults=!0;S.recognition.lang='en-US';S.recognition.maxAlternatives=1;S.recognition.onstart=()=>{S.isListening=!0;updateStatusIndicator();E.micButton.classList.add('a');E.stopButton.classList.add('v');addSystemMessage('Listening...')};S.recognition.onresult=e=>{let i='';let f='';for(let r=e.resultIndex;r<e.results.length;r++){const t=e.results[r][0].transcript;if(e.results[r].isFinal)f+=t;else i+=t}const l=E.messages.lastChild;if(i&&l&&l.classList.contains('msg')&&l.classList.contains('u'))l.textContent=i;if(f){const lm=Array.from(E.messages.children).find(m=>m.classList.contains('msg')&&m.classList.contains('sy')&&m.textContent.includes('Listening'));if(lm)E.messages.removeChild(lm);addUserMessage(f);processUserInput(f)}};S.recognition.onerror=e=>{console.error('Error:',e.error);addSystemMessage(`Error: ${e.error}`);stopRecording()};S.recognition.onend=()=>{if(S.isListening)stopRecording()};try{S.recognition.start()}catch(e){console.error('Error:',e);addSystemMessage('Voice recognition error')}}function stopRecording(){if(S.recognition)try{S.recognition.stop()}catch(e){console.error('Error:',e)}S.isListening=!1;S.isProcessing=!1;updateStatusIndicator();E.micButton.classList.remove('a');E.stopButton.classList.remove('v')}async function processUserInput(t){if(!t||t.trim()==='')return;S.isProcessing=!0;updateStatusIndicator();const ti=document.createElement('div');ti.className='t';ti.id='typingIndicator';ti.innerHTML='<span></span><span></span><span></span>';E.messages.appendChild(ti);scrollToBottom();try{const r=await callGeminiAPI(t);const i=document.getElementById('typingIndicator');if(i)E.messages.removeChild(i);addBotMessage(r);speak(r)}catch(e){console.error('Error:',e);const i=document.getElementById('typingIndicator');if(i)E.messages.removeChild(i);addSystemMessage(`Error: ${e.message}`)}finally{S.isProcessing=!1}}async function callGeminiAPI(u){if(!S.apiKey||!S.currentModel)throw new Error('API key or model not configured');let sp=getSystemPrompt();const b={contents:[{role:'user',parts:[{text:u}]}],systemInstruction:{parts:[{text:sp}]},generationConfig:{temperature:.7,topP:.9,topK:40,maxOutputTokens:500}};if(S.conversationHistory.length>0){b.contents=[{role:'model',parts:[{text:sp}]},...S.conversationHistory,...b.contents]}try{const r=await fetch(`${C.apiEndpoint}/${S.currentModel}:generateContent?key=${S.apiKey}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});if(!r.ok){const e=await r.json();throw new Error(e.error?.message||`HTTP ${r.status}`)}const d=await r.json();let t='';if(d.candidates&&d.candidates.length>0)t=d.candidates[0].content.parts[0].text||'';S.conversationHistory.push({role:'user',parts:[{text:u}]},{role:'model',parts:[{text:t}]});if(S.conversationHistory.length>30)S.conversationHistory=S.conversationHistory.slice(-30);return t}catch(e){console.error('API error:',e);throw e}}function speak(t){if(!S.synthesis||!t)return;S.synthesis.cancel();const u=new SpeechSynthesisUtterance(t);const v=S.synthesis.getVoices();const p=v.find(v=>v.lang.startsWith('en-US')&&v.name.includes('Google'))||v.find(v=>v.lang.startsWith('en'));if(p)u.voice=p;u.rate=.95;u.pitch=1;u.volume=1;u.onstart=()=>{S.isSpeaking=!0;updateStatusIndicator()};u.onend=()=>{S.isSpeaking=!1;updateStatusIndicator()};u.onerror=e=>{console.error('Error:',e);S.isSpeaking=!1;updateStatusIndicator()};try{S.synthesis.speak(u)}catch(e){console.error('Error:',e)}}function addMessage(t,c){const m=document.createElement('div');m.className=`msg ${c}`;m.textContent=t;E.messages.appendChild(m);scrollToBottom();return m}function addUserMessage(t){return addMessage(t,'u')}function addBotMessage(t){return addMessage(t,'b')}function addSystemMessage(t){return addMessage(t,'sy')}function scrollToBottom(){E.messages.scrollTop=E.messages.scrollHeight}document.addEventListener('DOMContentLoaded',I);document.addEventListener('visibilitychange',()=>{if(document.hidden){if(S.isListening)stopRecording();if(S.isSpeaking){S.synthesis.cancel();S.isSpeaking=!1;updateStatusIndicator()}}});document.addEventListener('keypress',e=>{if(e.key==='Enter'&&e.target.tagName==='INPUT')e.preventDefault()});document.addEventListener('touchstart',e=>{if(e.target===E.micButton&&!S.isListening){e.preventDefault();startListening()}},{passive:!1});
+        const CONFIG = {
+            apiEndpoint: 'https://generativelanguage.googleapis.com/v1beta',
+            modelsEndpoint: 'https://generativelanguage.googleapis.com/v1beta/models',
+            personas: {
+                wise: { name: 'Wise', systemPrompt: 'You are NeoBot, a wise assistant. Be supportive but maintain your own perspective - not a mirror. Provide thoughtful guidance. Keep responses concise (2-4 sentences).' },
+                friend: { name: 'Friend', systemPrompt: 'You are NeoBot, a supportive friend. Be empathetic but offer your own thoughts. Create a safe space. Keep it warm and conversational.' },
+                analyst: { name: 'Analyst', systemPrompt: 'You are NeoBot, an analytical assistant. Be logical and data-driven. Break down complex issues. Be precise and factual.' },
+                humor: { name: 'Humor', systemPrompt: 'You are NeoBot, a witty assistant. Use appropriate humor. Balance fun with understanding. Keep it respectful.' },
+                strict: { name: 'Strict', systemPrompt: 'You are NeoBot, a direct coach. Be straightforward and honest. Push users to improve. Be firm but fair.' },
+                creative: { name: 'Creative', systemPrompt: 'You are NeoBot, a creative assistant. Offer fresh perspectives. Inspire new ideas. Balance creativity with practicality.' }
+            },
+            defaultPersona: 'wise'
+        };
+
+        let state = {
+            isListening: false,
+            isSpeaking: false,
+            isProcessing: false,
+            isConnected: false,
+            currentModel: '',
+            apiKey: localStorage.getItem('geminiApiKey') || '',
+            models: [],
+            persona: localStorage.getItem('neobotPersona') || CONFIG.defaultPersona,
+            customInstructions: localStorage.getItem('neobotCustomInstructions') || '',
+            recognition: null,
+            synthesis: window.speechSynthesis,
+            conversationHistory: [],
+            setupComplete: false
+        };
+
+        const elements = {
+            messages: document.getElementById('messages'),
+            micButton: document.getElementById('micButton'),
+            stopButton: document.getElementById('stopButton'),
+            statusIndicator: document.getElementById('statusIndicator'),
+            modelSelect: document.getElementById('modelSelect'),
+            refreshModelsBtn: document.getElementById('refreshModelsBtn'),
+            modelInfo: document.getElementById('modelInfo'),
+            apiKey: document.getElementById('apiKey'),
+            saveApiKey: document.getElementById('saveApiKey'),
+            setupPhase: document.getElementById('setupPhase'),
+            modelSelector: document.getElementById('modelSelector'),
+            controls: document.querySelector('.controls'),
+            settingsBtn: document.getElementById('settingsBtn'),
+            settingsModal: document.getElementById('settingsModal'),
+            closeSettings: document.getElementById('closeSettings'),
+            savePersona: document.getElementById('savePersona'),
+            resetPersona: document.getElementById('resetPersona'),
+            customInstructions: document.getElementById('customInstructions'),
+            personaOptions: document.getElementById('personaOptions')
+        };
+
+        function init() {
+            loadPersonaSettings();
+            setupEventListeners();
+            if (state.apiKey) {
+                elements.apiKey.value = state.apiKey;
+                connectToGemini();
+            }
+        }
+
+        function setupEventListeners() {
+            elements.micButton.addEventListener('click', toggleListening);
+            elements.stopButton.addEventListener('click', stopRecording);
+            elements.saveApiKey.addEventListener('click', saveApiKey);
+            elements.apiKey.addEventListener('keypress', e => {
+                if (e.key === 'Enter') saveApiKey();
+            });
+            elements.refreshModelsBtn.addEventListener('click', loadModels);
+            elements.modelSelect.addEventListener('change', e => {
+                state.currentModel = e.target.value;
+                updateModelInfo();
+            });
+            elements.settingsBtn.addEventListener('click', () => {
+                elements.settingsModal.classList.add('visible');
+            });
+            elements.closeSettings.addEventListener('click', () => {
+                elements.settingsModal.classList.remove('visible');
+            });
+            elements.savePersona.addEventListener('click', savePersonaSettings);
+            elements.resetPersona.addEventListener('click', resetPersonaSettings);
+            elements.personaOptions.addEventListener('click', e => {
+                const card = e.target.closest('.persona-card');
+                if (card) selectPersona(card.dataset.persona);
+            });
+            elements.settingsModal.addEventListener('click', e => {
+                if (e.target === elements.settingsModal) {
+                    elements.settingsModal.classList.remove('visible');
+                }
+            });
+            if (state.synthesis) {
+                state.synthesis.onvoiceschanged = updateVoices;
+            }
+        }
+
+        function loadPersonaSettings() {
+            elements.personaOptions.querySelectorAll('.persona-card').forEach(card => {
+                card.classList.remove('selected');
+                if (card.dataset.persona === state.persona) {
+                    card.classList.add('selected');
+                }
+            });
+            elements.customInstructions.value = state.customInstructions;
+        }
+
+        function selectPersona(persona) {
+            state.persona = persona;
+            elements.personaOptions.querySelectorAll('.persona-card').forEach(card => {
+                card.classList.remove('selected');
+                if (card.dataset.persona === persona) {
+                    card.classList.add('selected');
+                }
+            });
+        }
+
+        function savePersonaSettings() {
+            state.customInstructions = elements.customInstructions.value;
+            localStorage.setItem('neobotPersona', state.persona);
+            localStorage.setItem('neobotCustomInstructions', state.customInstructions);
+            elements.settingsModal.classList.remove('visible');
+            addSystemMessage('Persona: ' + CONFIG.personas[state.persona].name);
+        }
+
+        function resetPersonaSettings() {
+            state.persona = CONFIG.defaultPersona;
+            state.customInstructions = '';
+            elements.customInstructions.value = '';
+            loadPersonaSettings();
+            localStorage.setItem('neobotPersona', state.persona);
+            localStorage.setItem('neobotCustomInstructions', '');
+            addSystemMessage('Persona reset to Wise');
+        }
+
+        function saveApiKey() {
+            state.apiKey = elements.apiKey.value.trim();
+            if (state.apiKey) {
+                localStorage.setItem('geminiApiKey', state.apiKey);
+                connectToGemini();
+            } else {
+                addSystemMessage('Enter API key');
+            }
+        }
+
+        function connectToGemini() {
+            state.isConnected = true;
+            updateStatusIndicator();
+            addSystemMessage('Connecting...');
+            loadModels();
+        }
+
+        async function loadModels() {
+            if (!state.apiKey) {
+                addSystemMessage('Enter API key first');
+                return;
+            }
+            try {
+                addSystemMessage('Loading models...');
+                const response = await fetch(CONFIG.modelsEndpoint + '?key=' + state.apiKey);
+                if (!response.ok) throw new Error('HTTP ' + response.status);
+                const data = await response.json();
+                state.models = data.models || [];
+                const contentModels = state.models.filter(m =>
+                    m.supportedGenerationMethods && m.supportedGenerationMethods.includes('generateContent')
+                );
+                contentModels.sort((a, b) => getModelPriority(a) - getModelPriority(b));
+                updateModelDropdown(contentModels);
+                if (contentModels.length > 0) {
+                    state.currentModel = contentModels[0].name;
+                    elements.modelSelect.value = state.currentModel;
+                    updateModelInfo();
+                }
+                addSystemMessage('Loaded ' + contentModels.length + ' models. Using: ' + (contentModels[0]?.displayName || 'Unknown'));
+                state.setupComplete = true;
+                elements.setupPhase.style.display = 'none';
+                document.querySelectorAll('.hidden').forEach(el => el.classList.remove('hidden'));
+            } catch (error) {
+                console.error('Error:', error);
+                addSystemMessage('Error: ' + error.message);
+                state.isConnected = false;
+                updateStatusIndicator();
+            }
+        }
+
+        function getModelPriority(model) {
+            const baseModelId = model.baseModelId || '';
+            if (baseModelId.includes('flash-lite') || baseModelId.includes('nano')) return 1;
+            if (baseModelId.includes('flash')) return 2;
+            if (baseModelId.includes('pro')) return 3;
+            return 2;
+        }
+
+        function updateModelDropdown(models) {
+            elements.modelSelect.innerHTML = '<option value="">Select model...</option>';
+            models.forEach(model => {
+                const option = document.createElement('option');
+                option.value = model.name;
+                option.textContent = model.displayName + ' (' + model.baseModelId + ')';
+                elements.modelSelect.appendChild(option);
+            });
+        }
+
+        function updateModelInfo() {
+            if (!state.currentModel) {
+                elements.modelInfo.textContent = '';
+                return;
+            }
+            const model = state.models.find(m => m.name === state.currentModel);
+            if (model) {
+                elements.modelInfo.textContent = 'Input: ' + (model.inputTokenLimit || 'N/A') + ' | Output: ' + (model.outputTokenLimit || 'N/A') + ' tokens';
+            }
+        }
+
+        function updateVoices() {
+            console.log('Voices loaded:', state.synthesis.getVoices().length);
+        }
+
+        function updateStatusIndicator() {
+            elements.statusIndicator.className = 'status';
+            if (state.isConnected) elements.statusIndicator.classList.add('connected');
+            if (state.isListening) elements.statusIndicator.classList.add('listening');
+            if (state.isSpeaking) elements.statusIndicator.classList.add('speaking');
+        }
+
+        function getSystemPrompt() {
+            const persona = CONFIG.personas[state.persona] || CONFIG.personas[CONFIG.defaultPersona];
+            let prompt = persona.systemPrompt;
+            if (state.customInstructions) {
+                prompt += '\n\nExtra: ' + state.customInstructions;
+            }
+            return prompt;
+        }
+
+        function toggleListening() {
+            if (!state.apiKey) {
+                elements.setupPhase.style.display = 'block';
+                elements.apiKey.focus();
+                return;
+            }
+            if (!state.currentModel) {
+                addSystemMessage('Select model first');
+                return;
+            }
+            if (state.isListening) {
+                stopRecording();
+            } else {
+                startListening();
+            }
+        }
+
+        function startListening() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                addSystemMessage('Speech Recognition not supported');
+                return;
+            }
+            if (state.isSpeaking) {
+                state.synthesis.cancel();
+                state.isSpeaking = false;
+                updateStatusIndicator();
+            }
+            state.recognition = new SpeechRecognition();
+            state.recognition.continuous = false;
+            state.recognition.interimResults = true;
+            state.recognition.lang = 'en-US';
+            state.recognition.maxAlternatives = 1;
+
+            state.recognition.onstart = () => {
+                state.isListening = true;
+                updateStatusIndicator();
+                elements.micButton.classList.add('active');
+                elements.stopButton.classList.add('visible');
+                addSystemMessage('Listening...');
+            };
+
+            state.recognition.onresult = event => {
+                let interimTranscript = '';
+                let finalTranscript = '';
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const transcript = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) {
+                        finalTranscript += transcript;
+                    } else {
+                        interimTranscript += transcript;
+                    }
+                }
+                const lastMessage = elements.messages.lastChild;
+                if (interimTranscript && lastMessage && lastMessage.classList.contains('message') && lastMessage.classList.contains('user')) {
+                    lastMessage.textContent = interimTranscript;
+                }
+                if (finalTranscript) {
+                    const listeningMsg = Array.from(elements.messages.children).find(m =>
+                        m.classList.contains('message') && m.classList.contains('system') && m.textContent.includes('Listening')
+                    );
+                    if (listeningMsg) elements.messages.removeChild(listeningMsg);
+                    addUserMessage(finalTranscript);
+                    processUserInput(finalTranscript);
+                }
+            };
+
+            state.recognition.onerror = event => {
+                console.error('Speech recognition error:', event.error);
+                addSystemMessage('Error: ' + event.error);
+                stopRecording();
+            };
+
+            state.recognition.onend = () => {
+                if (state.isListening) stopRecording();
+            };
+
+            try {
+                state.recognition.start();
+            } catch (error) {
+                console.error('Error starting recognition:', error);
+                addSystemMessage('Voice recognition error');
+            }
+        }
+
+        function stopRecording() {
+            if (state.recognition) {
+                try {
+                    state.recognition.stop();
+                } catch (error) {
+                    console.error('Error stopping recognition:', error);
+                }
+            }
+            state.isListening = false;
+            state.isProcessing = false;
+            updateStatusIndicator();
+            elements.micButton.classList.remove('active');
+            elements.stopButton.classList.remove('visible');
+        }
+
+        async function processUserInput(text) {
+            if (!text || text.trim() === '') return;
+            state.isProcessing = true;
+            updateStatusIndicator();
+
+            const typingIndicator = document.createElement('div');
+            typingIndicator.className = 'typing';
+            typingIndicator.id = 'typingIndicator';
+            typingIndicator.innerHTML = '<span></span><span></span><span></span>';
+            elements.messages.appendChild(typingIndicator);
+            scrollToBottom();
+
+            try {
+                const response = await callGeminiAPI(text);
+                const indicator = document.getElementById('typingIndicator');
+                if (indicator) elements.messages.removeChild(indicator);
+                addBotMessage(response);
+                speak(response);
+            } catch (error) {
+                console.error('Error:', error);
+                const indicator = document.getElementById('typingIndicator');
+                if (indicator) elements.messages.removeChild(indicator);
+                addSystemMessage('Error: ' + error.message);
+            } finally {
+                state.isProcessing = false;
+            }
+        }
+
+        async function callGeminiAPI(userMessage) {
+            if (!state.apiKey || !state.currentModel) {
+                throw new Error('API key or model not configured');
+            }
+            let systemPrompt = getSystemPrompt();
+            const requestBody = {
+                contents: [{ role: 'user', parts: [{ text: userMessage }] }],
+                systemInstruction: { parts: [{ text: systemPrompt }] },
+                generationConfig: { temperature: 0.7, topP: 0.9, topK: 40, maxOutputTokens: 500 }
+            };
+            if (state.conversationHistory.length > 0) {
+                requestBody.contents = [
+                    { role: 'model', parts: [{ text: systemPrompt }] },
+                    ...state.conversationHistory,
+                    ...requestBody.contents
+                ];
+            }
+            try {
+                const response = await fetch(CONFIG.apiEndpoint + '/' + state.currentModel + ':generateContent?key=' + state.apiKey, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody)
+                });
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error?.message || 'HTTP ' + response.status);
+                }
+                const data = await response.json();
+                let responseText = '';
+                if (data.candidates && data.candidates.length > 0) {
+                    responseText = data.candidates[0].content.parts[0].text || '';
+                }
+                state.conversationHistory.push(
+                    { role: 'user', parts: [{ text: userMessage }] },
+                    { role: 'model', parts: [{ text: responseText }] }
+                );
+                if (state.conversationHistory.length > 30) {
+                    state.conversationHistory = state.conversationHistory.slice(-30);
+                }
+                return responseText;
+            } catch (error) {
+                console.error('API error:', error);
+                throw error;
+            }
+        }
+
+        function speak(text) {
+            if (!state.synthesis || !text) return;
+            state.synthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            const voices = state.synthesis.getVoices();
+            const preferredVoice = voices.find(v => v.lang.startsWith('en-US') && v.name.includes('Google')) || voices.find(v => v.lang.startsWith('en'));
+            if (preferredVoice) utterance.voice = preferredVoice;
+            utterance.rate = 0.95;
+            utterance.pitch = 1;
+            utterance.volume = 1;
+            utterance.onstart = () => { state.isSpeaking = true; updateStatusIndicator(); };
+            utterance.onend = () => { state.isSpeaking = false; updateStatusIndicator(); };
+            utterance.onerror = () => { state.isSpeaking = false; updateStatusIndicator(); };
+            try {
+                state.synthesis.speak(utterance);
+            } catch (error) {
+                console.error('Error speaking:', error);
+            }
+        }
+
+        function addMessage(text, className) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ' + className;
+            messageDiv.textContent = text;
+            elements.messages.appendChild(messageDiv);
+            scrollToBottom();
+            return messageDiv;
+        }
+
+        function addUserMessage(text) { return addMessage(text, 'user'); }
+        function addBotMessage(text) { return addMessage(text, 'bot'); }
+        function addSystemMessage(text) { return addMessage(text, 'system'); }
+
+        function scrollToBottom() {
+            elements.messages.scrollTop = elements.messages.scrollHeight;
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                if (state.isListening) stopRecording();
+                if (state.isSpeaking) {
+                    state.synthesis.cancel();
+                    state.isSpeaking = false;
+                    updateStatusIndicator();
+                }
+            }
+        });
+        document.addEventListener('keypress', e => {
+            if (e.key === 'Enter' && e.target.tagName === 'INPUT') e.preventDefault();
+        });
+        document.addEventListener('touchstart', e => {
+            if (e.target === elements.micButton && !state.isListening) {
+                e.preventDefault();
+                startListening();
+            }
+        }, { passive: false });
     </script>
 </body>
 </html>
